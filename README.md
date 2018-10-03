@@ -12,7 +12,7 @@
 		<ul>
 			<li>Login & account creation</li>
 			<li>Storage of transactional data</li>
-		<ul>
+		</ul>
 	</li>
 	<li>Display of metrics based on above queries:
 		<ul>

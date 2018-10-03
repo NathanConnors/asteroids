@@ -1,4 +1,4 @@
-#Financial Log
+<h1>Financial Log</h1>
 *The finanical log is an application intended to test the functionality of AJAX in conjuction with PHP.
 *The financial log will include features like API lookup and MySQL database queries.
 *All functionality will be on localhost only, however this application may be used as a testing ground for learning website/application security.

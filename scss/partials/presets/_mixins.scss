@@ -1,0 +1,30 @@
+@mixin shadow-fade {
+  position: relative;
+  overflow: hidden;
+  transition: {
+    property: max-height;
+    duration: .5s;
+    timing-function: $cubic;
+  }
+  .shade {
+    position: absolute;
+    height: 2rem;
+    z-index: 2;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    opacity: 1;
+    background: linear-gradient(
+      transparent,
+      rgba($white, .1)
+    );
+    transition: {
+      property: opacity;
+      duration: .5s;
+      timing-function: $cubic;
+    }
+  }
+  &.open .shade {
+    opacity: 0;
+  }
+}

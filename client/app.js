@@ -1,50 +1,23 @@
 // Canvas object used for drawing
 class Canvas {
-    constructor() {
+    constructor () {
         // Set up canvas
         this.context = $('#asteroids')[0].getContext('2d');
 
         // drawGrid (ctx, minor, major, strokeColor, fillColor)
         this.drawGrid(this.context, 10, 50, 'red', 'yellow');
 
-        // drawShip (ctx, x, y, radius, options)
-        // this.drawShip(this.context, 200, 200, 150, {
-        //     guide: true
-        // });
-        // this.drawShip(this.context, 75, 75, 50, {
-        //     stroke: 'gold',
-        //     fill: 'purple'
-        // });
-        // this.drawShip(this.context, 325, 325, 50, {
-        //     angle: .8 * Math.PI,
-        //     guide: true
-        // });
-        // this.drawShip(this.context, 75, 325, 50, {
-        //     angle: .3 * Math.PI,
-        //     guide: true
-        // });
-        // this.drawShip(this.context, 325, 75, 50, {
-        //     lineWidth: 8,
-        //     fill: 'blue'
-        // });
 
-        // this.rotation(this.context);
-        // this.translate(this.context);
+        // Ship drawing functions
+        // this.drawMultipleShips(this.context);
+        // this.drawSingleShip(this.context);
 
-        // Would be a cool ship selection
-        this.drawMultipleShips(this.context);
-        // this.context.translate(200, 200);
-        // this.drawShip(this.context, 150, {
-        //     curve1: Math.random(),
-        //     curve2: Math.random(),
-        //     guide: true
-        // });
-
-
+        // Draw Asteroid
+        this.initAsteroid(this.context);
     }
 
     // Function that draws grid based on optional parameters
-    drawGrid(ctx, minor, major, stroke, fill) {
+    drawGrid (ctx, minor, major, stroke, fill) {
         // Set defaults if parameter not given
         minor = minor || 10;
         major = major || _minor * 5;
@@ -55,7 +28,7 @@ class Canvas {
         ctx.strokeStyle = stroke;
         ctx.fillStyle = fill;
 
-        // set standard variables to canvas dimensions
+        // Set standard variables to canvas dimensions
         let _width = ctx.canvas.width,
             _height = ctx.canvas.height;
 
@@ -84,8 +57,72 @@ class Canvas {
         ctx.restore();
     }
 
-    // Exercise 4
-    drawMultipleShips(ctx) {
+    // Chapter 5
+    initAsteroid (ctx) {
+    	let segments = 15, noise = 0;
+    	let shape = [];
+
+    	// Populate shape array for asteroid shapes
+    	for (let i = 0; i < segments; i++) {
+    		shape.push(2 * (Math.random() - .5));
+    	}
+    	// console.log(shape);
+    	
+    	// Call drawAsteroid()
+    	for (let y = .1; y < 1; y += .2) {
+    		for (let x = .1; x < 1; x += .2) {
+    			ctx.save();
+    			ctx.translate(ctx.canvas.width * x, ctx.canvas.height * y);
+              	this.drawAsteroid(ctx, ctx.canvas.width / 16, shape, {
+              		noise: noise,
+              		guide:true
+              	});
+              	ctx.restore();
+              	// Add more noise every asteroid
+              	noise += .025;
+    		}
+    	}
+    }
+    drawAsteroid (ctx, radius, shape, options) {
+        options = options || {};
+        ctx.strokeStyle = options.stroke || 'white';
+        ctx.fillStyle = options.fill || 'black';
+        ctx.save();
+
+        ctx.beginPath();
+        // Drawing occurs here
+        for (let i = 0; i < shape.length; i++) {
+        	ctx.rotate(2 * Math.PI / shape.length);
+        	ctx.lineTo(radius + radius * options.noise * shape[i], 0);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        if (options.guide) {
+        	ctx.lineWidth = .5;
+        	ctx.beginPath();
+        	ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+        	ctx.stroke();
+        	ctx.lineWidth = .2;
+        	ctx.arc(0, 0, radius + radius * options.noise, 0, 2 * Math.PI);
+        	ctx.stroke();
+        	ctx.beginPath();
+        	ctx.arc(0, 0, radius - radius * options.noise, 0, 2 * Math.PI);
+        	ctx.stroke();
+        }
+        ctx.restore();
+    }
+
+    // Chapter 4
+    drawSingleShip (ctx) {
+        this.context.translate(200, 200);
+        this.drawShip(this.context, 150, {
+            curve1: Math.random(),
+            curve2: Math.random(),
+            guide: true
+        });
+    }
+    drawMultipleShips (ctx) {
         let c1 = 0,
             c2 = 0;
         for (c1 = .1; c1 < 1; c1 += .2) {
@@ -102,7 +139,7 @@ class Canvas {
             }
         }
     }
-    translate(ctx) {
+    translate (ctx) {
         let x, y, angle = 0;
         let w = ctx.canvas.width,
             h = ctx.canvas.height;
@@ -119,19 +156,8 @@ class Canvas {
                 angle = (angle += .0075 * Math.PI);
             }
         }
-        // let t = ctx.canvas.width / 20;
-        // let r = Math.PI / 500;
-        // ctx.translate(0, t);
-        // for (let i = 0; i < 50; i++) {
-        //     ctx.rotate(i * r);
-        //     this.drawShip(ctx, t, {
-        //         guide: true,
-        //         lineWidth: 1
-        //     });
-        //     ctx.translate(t, 0);
-        // }
     }
-    rotation(ctx) {
+    rotation (ctx) {
         let x = ctx.canvas.width * .9;
         let y = 0;
         let radius = ctx.canvas.width * .1;
@@ -149,7 +175,7 @@ class Canvas {
         }
     }
 
-    drawShip(ctx, radius, options) {
+    drawShip (ctx, radius, options) {
         options = options || {};
         let angle = (options.angle || .5 * Math.PI) / 2;
         let curve1 = options.curve1 || .25;
@@ -228,8 +254,8 @@ class Canvas {
         ctx.restore();
     }
 
-    // Exercise 3
-    drawPacMan(ctx, x, y, radius) {
+    // Chapter 3
+    drawPacMan (ctx, x, y, radius) {
         ctx.save();
         console.log(radius);
         ctx.beginPath();
@@ -244,8 +270,8 @@ class Canvas {
         ctx.restore();
     }
 
-    // Exercise 2
-    drawShape(ctx) {
+    // Chapter 2
+    drawShape (ctx) {
         ctx.beginPath();
         ctx.strokeStyle = '#FFFFFF';
         ctx.fillStyle = '#00FF00';
@@ -278,6 +304,11 @@ class Canvas {
         ctx.fillStyle = '#000000';
         ctx.fill();
         ctx.stroke();
+    }
+
+    // Pointless function
+    stopClickingMe() {
+    	alert("Play the game you nerd!");
     }
 }
 // Controller is used for all php communication
@@ -333,7 +364,7 @@ class Main {
 /* Event Handlers */
 const main = new Main();
 (_ => {
-	$(document).on('click', '#login-btn', function () {
-		main.controller.grabData();
+	$(document).on('click', '#gameTitle', function () {
+		main.canvas.stopClickingMe();
 	})
 })();

@@ -1,2 +1,6 @@
-.test {
-  color: #fff; }
+body {
+  text-align: center;
+  font-family: sans-serif; }
+
+canvas {
+  background-color: #000; }

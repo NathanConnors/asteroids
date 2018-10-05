@@ -23,12 +23,18 @@ class Controller {
         });
     }
 
-    // Login Handler
-    login() {
-            console.log('test');
-        }
-        // Account Creation
+    // Account Creation
     createAccount() {
         console.log('creating account...');
+    }
+
+    // Login
+    login() {
+        console.log('logging in...');
+    }
+
+    // API call for stock (Parameter:array)
+    stockData(arr) {
+
     }
 }

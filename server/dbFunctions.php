@@ -28,8 +28,8 @@
 			}
 		}
 
-		// Login function that takes in password and username parameters
-		function login ($username, $password) {
+		// Generate New High Score (limit db to 10?)
+		function newScore ($username, $password) {
 			// Query
 			$sql = "SELECT User_Name, Password FROM user WHERE User_Name = '$username'";
 			$result = $this->conn->query($sql);
@@ -46,6 +46,11 @@
 			} else {
 				echo false;
 			}
+		}
+
+		// Pull all high scores from DB
+		function getScores () {
+
 		}
 	}
 ?>

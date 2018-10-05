@@ -1,5 +1,5 @@
 <?php
-	// include.php is used to load all required php files for server
+	// server.php loads all php modules
 	include 'config.php';
 	include 'dbFunctions.php';
 ?>

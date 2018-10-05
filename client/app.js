@@ -3,71 +3,98 @@ class Canvas {
     constructor() {
         // Set up canvas
         this.canvas = $('#asteroids')[0];
+        this.context = this.canvas.getContext('2d');
 
-        this.drawSquare();
-        this.drawFigure();
+        // Grid settings
+        this.minor = 10;
+        this.major = 50;
+        this.stroke = 'red';
+        this.fill = 'yellow';
+
+        this.drawGrid(
+            this.context,
+            this.minor,
+            this.major,
+            this.stroke,
+            this.fill);
+
+        this.drawShape(this.context);
     }
 
-    // Draw a square with text
-    drawSquare() {
-        // Set context of canvas
-        let c = this.canvas.getContext('2d');
+    // Draw a grid
+    drawGrid(ctx, minor, major, stroke, fill) {
+        // Set defaults if parameter not given
+        let _minor = minor || 10;
+        let _major = major || _minor * 5;
+        let _stroke = stroke || '#00FF00';
+        let _fill = fill || '#009900';
+        ctx.save();
 
-        // Shape drawing
-        c.strokeStyle = 'lightgrey';
-        c.fillStyle = 'dimgrey';
-        c.lineWidth = 5;
-        c.rect(75, 50, this.canvas.width - 150, this.canvas.height - 100);
+        ctx.strokeStyle = _stroke;
+        ctx.fillStyle = _fill;
 
-        // Completes drawing
-        c.stroke();
-        c.fill();
+        // set standard variables to canvas dimensions
+        let _width = this.canvas.width,
+            _height = this.canvas.height;
 
-        // Text rendering
-        c.font = '34px Arial';
-        c.strokeStyle = '#FF2222';
-        c.fillStyle = '#FFAAAA';
-        c.lineWidth = 0.75;
-        c.textAlign = 'center';
+        for (let i = 0; i < _width; i += _minor) {
+            ctx.beginPath();
+            ctx.moveTo(i, 0);
+            ctx.lineTo(i, _height);
+            ctx.lineWidth = (i % _major == 0) ? .5 : .25;
+            ctx.stroke();
+            if (i % _major == 0) {
+                ctx.fillText(i, i, 10);
+            }
+        }
 
-        let msg = '2D Drawing';
+        for (let i = 0; i < _height; i += _minor) {
+            ctx.beginPath();
+            ctx.moveTo(0, i);
+            ctx.lineTo(_width, i);
+            ctx.lineWidth = (i % _major == 0) ? .5 : .25;
+            ctx.stroke();
+            if (i % _major == 0) {
+                ctx.fillText(i, 0, i + 10);
+            }
+        }
 
-        c.fillText(msg, this.canvas.width / 2, 100);
-        c.strokeText(msg, this.canvas.width / 2, 100);
+        ctx.restore();
     }
 
-    // Draw a stick figure
-    drawFigure() {
-        let c = this.canvas.getContext('2d');
-        c.strokeStyle = '#FFFFFF';
-        c.lineWidth = 2;
+    drawShape(ctx) {
+        ctx.beginPath();
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.fillStyle = '#00FF00';
+        ctx.lineWidth = 2;
+        ctx.moveTo(50, 50);
+        ctx.bezierCurveTo(0, 0, 80, 250, 150, 250);
+        ctx.bezierCurveTo(250, 250, 250, 250, 250, 170);
+        ctx.bezierCurveTo(250, 50, 400, 350, 320, 280);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.fillText("(50, 50)", 30, 40);
+        ctx.fillText("(150, 250)", 130, 260);
+        ctx.fillText("(250, 170)", 255, 175);
+        // ctx.fill();
 
-        // Begin path
-        c.beginPath();
-        c.arc(200, 140, 20, 0, Math.PI * 2);
-        c.moveTo(200, 160);
-        c.lineTo(200, 220);
-        c.moveTo(180, 300);
-        c.lineTo(185, 260);
-        c.lineTo(200, 220);
-        c.lineTo(215, 260);
-        c.lineTo(220, 300);
-        c.moveTo(240, 130);
-        c.lineTo(225, 170);
-        c.lineTo(200, 170);
-        c.lineTo(175, 180);
-        c.lineTo(170, 220);
-        c.stroke();
-
-        c.font = '24px Arial';
-        c.strokeStyle = '#FF2222';
-        c.fillStyle = '#FFAAAA';
-        c.lineWidth = 0.75;
-        c.textAlign = 'center';
-        let msg = 'its quite easy';
-
-        c.fillText(msg, this.canvas.width / 2, 330);
-        c.strokeText(msg, this.canvas.width / 2, 330);
+        ctx.beginPath();
+        ctx.moveTo(50, 250);
+        ctx.quadraticCurveTo(25, 300, 50, 350);
+        ctx.quadraticCurveTo(100, 375, 150, 350);
+        ctx.closePath();
+        ctx.moveTo(230, 360);
+        ctx.quadraticCurveTo(255, 340, 270, 360);
+        ctx.quadraticCurveTo(255, 340, 270, 310);
+        ctx.closePath();
+        ctx.moveTo(250, 50);
+        ctx.quadraticCurveTo(310, 60, 370, 50);
+        ctx.quadraticCurveTo(400, 75, 370, 100);
+        ctx.closePath();
+        ctx.strokeStyle = '#FFFF00';
+        ctx.fillStyle = '#000000';
+        ctx.fill();
+        ctx.stroke();
     }
 }
 // Controller is used for all php communication

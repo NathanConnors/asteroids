@@ -2,68 +2,229 @@
 class Canvas {
     constructor() {
         // Set up canvas
-        this.canvas = $('#asteroids')[0];
-        this.context = this.canvas.getContext('2d');
+        this.context = $('#asteroids')[0].getContext('2d');
 
-        // Grid settings
-        this.minor = 10;
-        this.major = 50;
-        this.stroke = 'red'; //red is sweet!
-        this.fill = 'yellow';
+        // drawGrid (ctx, minor, major, strokeColor, fillColor)
+        this.drawGrid(this.context, 10, 50, 'red', 'yellow');
 
-        this.drawGrid(
-            this.context,
-            this.minor,
-            this.major,
-            this.stroke,
-            this.fill);
+        // drawShip (ctx, x, y, radius, options)
+        // this.drawShip(this.context, 200, 200, 150, {
+        //     guide: true
+        // });
+        // this.drawShip(this.context, 75, 75, 50, {
+        //     stroke: 'gold',
+        //     fill: 'purple'
+        // });
+        // this.drawShip(this.context, 325, 325, 50, {
+        //     angle: .8 * Math.PI,
+        //     guide: true
+        // });
+        // this.drawShip(this.context, 75, 325, 50, {
+        //     angle: .3 * Math.PI,
+        //     guide: true
+        // });
+        // this.drawShip(this.context, 325, 75, 50, {
+        //     lineWidth: 8,
+        //     fill: 'blue'
+        // });
 
-        // this.drawShape(this.context);
-        // this._refreshInterval = setInterval(_ => {
-        //     this.drawPacMan(this.context, 200, 200, Math.random());
-        // }, 1000);
+        // this.rotation(this.context);
+        // this.translate(this.context);
 
-        this.drawPacMan(this.context, 200, 200, Math.random());
+        // Would be a cool ship selection
+        this.drawMultipleShips(this.context);
+        // this.context.translate(200, 200);
+        // this.drawShip(this.context, 150, {
+        //     curve1: Math.random(),
+        //     curve2: Math.random(),
+        //     guide: true
+        // });
+
+
     }
 
     // Function that draws grid based on optional parameters
     drawGrid(ctx, minor, major, stroke, fill) {
         // Set defaults if parameter not given
-        let _minor = minor || 10;
-        let _major = major || _minor * 5;
-        let _stroke = stroke || '#00FF00';
-        let _fill = fill || '#009900';
+        minor = minor || 10;
+        major = major || _minor * 5;
+        stroke = stroke || '#00FF00';
+        fill = fill || '#009900';
         ctx.save();
 
-        ctx.strokeStyle = _stroke;
-        ctx.fillStyle = _fill;
+        ctx.strokeStyle = stroke;
+        ctx.fillStyle = fill;
 
         // set standard variables to canvas dimensions
-        let _width = this.canvas.width,
-            _height = this.canvas.height;
+        let _width = ctx.canvas.width,
+            _height = ctx.canvas.height;
 
-        for (let i = 0; i < _width; i += _minor) {
+        for (let i = 0; i < _width; i += minor) {
             ctx.beginPath();
             ctx.moveTo(i, 0);
             ctx.lineTo(i, _height);
-            ctx.lineWidth = (i % _major == 0) ? .5 : .25;
+            ctx.lineWidth = (i % major == 0) ? .5 : .25;
             ctx.stroke();
-            if (i % _major == 0) {
+            if (i % major == 0) {
                 ctx.fillText(i, i, 10);
             }
         }
 
-        for (let i = 0; i < _height; i += _minor) {
+        for (let i = 0; i < _height; i += minor) {
             ctx.beginPath();
             ctx.moveTo(0, i);
             ctx.lineTo(_width, i);
-            ctx.lineWidth = (i % _major == 0) ? .5 : .25;
+            ctx.lineWidth = (i % major == 0) ? .5 : .25;
             ctx.stroke();
-            if (i % _major == 0) {
+            if (i % major == 0) {
                 ctx.fillText(i, 0, i + 10);
             }
         }
 
+        ctx.restore();
+    }
+
+    // Exercise 4
+    drawMultipleShips(ctx) {
+        let c1 = 0,
+            c2 = 0;
+        for (c1 = .1; c1 < 1; c1 += .2) {
+            for (c2 = .1; c2 < 1; c2 += .2) {
+                ctx.save();
+                ctx.translate(ctx.canvas.width * c1, ctx.canvas.height * c2);
+                ctx.rotate(-Math.PI / 2);
+                this.drawShip(ctx, ctx.canvas.width / 12, {
+                    curve1: c1,
+                    curve2: c2,
+                    guide: true
+                });
+                ctx.restore();
+            }
+        }
+    }
+    translate(ctx) {
+        let x, y, angle = 0;
+        let w = ctx.canvas.width,
+            h = ctx.canvas.height;
+        for (y = h / 20; y < h; y += h / 10) {
+            for (x = w / 20; x < w; x += w / 10) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle);
+                this.drawShip(ctx, w / 30, {
+                    guide: true,
+                    lineWidth: 1
+                });
+                ctx.restore();
+                angle = (angle += .0075 * Math.PI);
+            }
+        }
+        // let t = ctx.canvas.width / 20;
+        // let r = Math.PI / 500;
+        // ctx.translate(0, t);
+        // for (let i = 0; i < 50; i++) {
+        //     ctx.rotate(i * r);
+        //     this.drawShip(ctx, t, {
+        //         guide: true,
+        //         lineWidth: 1
+        //     });
+        //     ctx.translate(t, 0);
+        // }
+    }
+    rotation(ctx) {
+        let x = ctx.canvas.width * .9;
+        let y = 0;
+        let radius = ctx.canvas.width * .1;
+
+        for (let i = 0; i <= .5 * Math.PI; i += .05 * Math.PI) {
+            ctx.save();
+            ctx.rotate(i);
+            this.drawShip(ctx, x, y, radius, {
+                guide: true
+            });
+            ctx.moveTo(0, 0);
+            ctx.lineTo(x, 0);
+            ctx.stroke();
+            ctx.restore();
+        }
+    }
+
+    drawShip(ctx, radius, options) {
+        options = options || {};
+        let angle = (options.angle || .5 * Math.PI) / 2;
+        let curve1 = options.curve1 || .25;
+        let curve2 = options.curve2 || .75;
+        ctx.save();
+
+        if (options.guide) {
+            ctx.strokeStyle = 'white';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+            ctx.lineWidth = .5;
+            ctx.beginPath();
+            ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.fill();
+        }
+
+        ctx.lineWidth = options.lineWidth || 2;
+        ctx.strokeStyle = options.stroke || 'white';
+        ctx.fillStyle = options.fill || 'black';
+
+
+        ctx.beginPath();
+        ctx.moveTo(radius, 0);
+        ctx.quadraticCurveTo(
+            Math.cos(angle) * radius * curve2,
+            Math.sin(angle) * radius * curve2,
+            Math.cos(Math.PI - angle) * radius,
+            Math.sin(Math.PI - angle) * radius
+        );
+
+        ctx.quadraticCurveTo(-radius * curve1, 0,
+            Math.cos(Math.PI + angle) * radius,
+            Math.sin(Math.PI + angle) * radius
+        );
+
+        ctx.quadraticCurveTo(
+            Math.cos(-angle) * radius * curve2,
+            Math.sin(-angle) * radius * curve2,
+            radius, 0
+        );
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        if (options.guide) {
+            ctx.strokeStyle = 'white';
+            ctx.fillStyle = 'white';
+            ctx.lineWidth = .5;
+            ctx.beginPath();
+            ctx.moveTo(
+                Math.cos(-angle) * radius,
+                Math.sin(-angle) * radius);
+            ctx.lineTo(0, 0);
+            ctx.lineTo(
+                Math.cos(angle) * radius,
+                Math.sin(angle) * radius);
+            ctx.moveTo(-radius, 0);
+            ctx.lineTo(0, 0);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(
+                Math.cos(angle) * radius * curve2,
+                Math.sin(angle) * radius * curve2,
+                radius / 40, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(
+                Math.cos(-angle) * radius * curve2,
+                Math.sin(-angle) * radius * curve2,
+                radius / 40, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(radius * curve1 - radius, 0, radius / 50, 0, 2 * Math.PI);
+            ctx.fill();
+        }
         ctx.restore();
     }
 

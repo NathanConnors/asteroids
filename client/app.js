@@ -8,7 +8,7 @@ class Canvas {
         // Grid settings
         this.minor = 10;
         this.major = 50;
-        this.stroke = 'red';
+        this.stroke = 'red'; //red is sweet!
         this.fill = 'yellow';
 
         this.drawGrid(
@@ -18,10 +18,15 @@ class Canvas {
             this.stroke,
             this.fill);
 
-        this.drawShape(this.context);
+        // this.drawShape(this.context);
+        // this._refreshInterval = setInterval(_ => {
+        //     this.drawPacMan(this.context, 200, 200, Math.random());
+        // }, 1000);
+
+        this.drawPacMan(this.context, 200, 200, Math.random());
     }
 
-    // Draw a grid
+    // Function that draws grid based on optional parameters
     drawGrid(ctx, minor, major, stroke, fill) {
         // Set defaults if parameter not given
         let _minor = minor || 10;
@@ -62,6 +67,23 @@ class Canvas {
         ctx.restore();
     }
 
+    // Exercise 3
+    drawPacMan(ctx, x, y, radius) {
+        ctx.save();
+        console.log(radius);
+        ctx.beginPath();
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 5;
+        ctx.arc(x, y, 150, radius * Math.PI, 1.8 * Math.PI);
+        ctx.lineTo(x, y);
+        ctx.fillStyle = 'yellow';
+        ctx.fill();
+        ctx.closePath();
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    // Exercise 2
     drawShape(ctx) {
         ctx.beginPath();
         ctx.strokeStyle = '#FFFFFF';

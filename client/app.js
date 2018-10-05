@@ -5,7 +5,7 @@ class Canvas {
         this.context = $('#asteroids')[0].getContext('2d');
 
         // drawGrid (ctx, minor, major, strokeColor, fillColor)
-        this.drawGrid(this.context, 10, 50, 'red', 'yellow');
+        // this.drawGrid(this.context, 10, 50, 'red', 'yellow');
 
 
         // Ship drawing functions
@@ -13,7 +13,22 @@ class Canvas {
         // this.drawSingleShip(this.context);
 
         // Draw Asteroid
-        this.initAsteroid(this.context);
+        // this.initAsteroid(this.context);
+
+        // Animation
+        this.x = 0;
+        this.y = this.context.canvas.height / 5, this.radius = 20;
+        this.xspeed = 1.5, this.yspeed = 0, this.gravity = .1;
+        this.mouth = 0;
+
+        this.context.strokeSTyle = 'white';
+    	this.context.lineWidth = 1.5;
+
+    	this.animation = setInterval(_ => {
+    		this.frame(this.context);
+    	}, 1000.0 / 60.0);
+    	
+        // this.startAnimation(this.context);
     }
 
     // Function that draws grid based on optional parameters
@@ -57,7 +72,66 @@ class Canvas {
         ctx.restore();
     }
 
-    // Chapter 5
+    // Chapter 6: Basic Animation (Should be reogranized to not use globals like this... ugly)
+    startAnimation (ctx) {
+    	console.log('Animation starting...');
+
+    	ctx.strokeSTyle = 'white';
+    	ctx.lineWidth = 1.5;
+
+    	setInterval(this.frame(ctx), 1000.0 / 60.0); // 60 fps
+    }
+
+    frame (ctx) {
+    	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    	this.draw(ctx);
+    	this.update(ctx);
+    }
+
+    update (ctx) {
+    	this.x += this.xspeed;
+    	this.y += this.yspeed;
+    	this.yspeed += this.gravity;
+    	if (this.y >= ctx.canvas.height - this.radius) {
+    		this.y = ctx.canvas.height - this.radius;
+    		this.yspeed *= -.6;
+    		this.xspeed *= .95;
+    	}
+    	if (this.x <= 0 || this.x >= ctx.canvas.width) {
+    		this.x = (this.x + ctx.canvas.width) % ctx.canvas.width;
+    	}
+    	this.mouth = Math.abs(Math.sin(6 * Math.PI * this.x / (ctx.canvas.width)));
+
+    }
+
+    draw (ctx) {
+    	this.drawGrid(this.context, 10, 50, 'red', 'yellow');
+    	// ctx.beginPath();
+    	// ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    	// ctx.fill();
+    	// ctx.stroke();
+    	ctx.save();
+    	ctx.translate(this.x, this.y);
+    	this.drawPacMan2(ctx, this.radius, this.mouth);
+    	ctx.restore();
+    }
+
+    drawPacMan2 (ctx, radius, mouth) {
+    	let angle = .2 * Math.PI * mouth;
+    	ctx.save();
+    	ctx.fillStyle = 'yellow';
+    	ctx.strokeStyle = 'black';
+    	ctx.lineWidth = .5;
+    	ctx.beginPath();
+    	ctx.arc(0, 0, radius, angle, -angle);
+    	ctx.lineTo(0, 0);
+    	ctx.closePath();
+    	ctx.fill();
+    	ctx.stroke();
+    	ctx.restore();
+    }
+
+    // Chapter 5: Drawing an Asteroid
     initAsteroid (ctx) {
     	let segments = 15, noise = 0;
     	let shape = [];
@@ -67,7 +141,7 @@ class Canvas {
     		shape.push(2 * (Math.random() - .5));
     	}
     	// console.log(shape);
-    	
+
     	// Call drawAsteroid()
     	for (let y = .1; y < 1; y += .2) {
     		for (let x = .1; x < 1; x += .2) {
@@ -113,7 +187,7 @@ class Canvas {
         ctx.restore();
     }
 
-    // Chapter 4
+    // Chapter 4: Drawing a Spaceship
     drawSingleShip (ctx) {
         this.context.translate(200, 200);
         this.drawShip(this.context, 150, {
@@ -254,7 +328,7 @@ class Canvas {
         ctx.restore();
     }
 
-    // Chapter 3
+    // Chapter 3: Drawing to a Design
     drawPacMan (ctx, x, y, radius) {
         ctx.save();
         console.log(radius);
@@ -270,7 +344,7 @@ class Canvas {
         ctx.restore();
     }
 
-    // Chapter 2
+    // Chapter 2: Understanding Paths
     drawShape (ctx) {
         ctx.beginPath();
         ctx.strokeStyle = '#FFFFFF';
